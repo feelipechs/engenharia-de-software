@@ -1,15 +1,15 @@
 import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  const Aluno = sequelize.define(
-    'Aluno',
+  const Student = sequelize.define(
+    'Student',
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      nome: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -17,7 +17,7 @@ export default (sequelize) => {
         type: DataTypes.STRING,
         unique: true,
       },
-      matricula: {
+      registration: {
         type: DataTypes.STRING(10), // Limite a string
         unique: true,
         allowNull: false,
@@ -33,10 +33,10 @@ export default (sequelize) => {
       },
     },
     {
-      tableName: 'alunos', // Opcional: define o nome exato da tabela
+      tableName: 'students', // Opcional: define o nome exato da tabela
       timestamps: true, // Adiciona colunas createdAt e updatedAt
     },
   );
 
-  return Aluno;
+  return Student;
 };

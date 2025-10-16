@@ -1,14 +1,16 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors'; // Importando o cors
 dotenv.config();
 
 // IMPORTAÇÃO DOS MODELS E INSTÂNCIA DO SEQUELIZE
-// Este 'db' agora contém a instância do Sequelize e todos os Models (Aluno, Curso, Inscricao)
+// Este 'db' agora contém a instância do Sequelize e todos os Models (Student, Course, Enrollment)
 import db from './models/index.js'; // Assumindo que você criou models/index.js
 
-import alunoRoutes from './routes/alunoRoutes.js';
-import cursoRoutes from './routes/cursoRoutes.js';
-import inscricaoRoutes from './routes/inscricaoRoutes.js';
+// Renomeando as importações das rotas
+import StudentRoutes from './routes/StudentRoutes.js'; // alunoRoutes -> StudentRoutes
+import CourseRoutes from './routes/CourseRoutes.js'; // cursoRoutes -> CourseRoutes
+import EnrollmentRoutes from './routes/EnrollmentRoutes.js'; // inscricaoRoutes -> EnrollmentRoutes
 
 const app = express();
 const PORT = process.env.PORT || 3000; // Bom ter um fallback
@@ -25,9 +27,10 @@ app.use(cors());
 // ----------------------------------------------------
 // 2. ASSOCIAÇÃO DAS ROTAS (Onde ficam os app.use('/caminho', router))
 // ----------------------------------------------------
-app.use('/alunos', alunoRoutes);
-app.use('/cursos', cursoRoutes);
-app.use('/inscricoes', inscricaoRoutes);
+// Atualizando os caminhos das rotas para refletir a nova organização
+app.use('/alunos', StudentRoutes); // /alunos -> /students
+app.use('/cursos', CourseRoutes); // /cursos -> /courses
+app.use('/inscricoes', EnrollmentRoutes); // /inscricoes -> /enrollments
 
 // tratar rotas não encontradas (Este é um middleware de erro final)
 app.use((req, res, next) => {

@@ -1,11 +1,13 @@
-import cursoService from '../services/cursoService.js';
+import CourseService from '../services/CourseService.js'; // cursoService -> CourseService
 
-class CursoController {
+class CourseController {
+  // CursoController -> CourseController
   // GET /cursos
-  async listarCursos(req, res) {
+  async findAllCourses(req, res) {
+    // listarCursos -> findAllCourses
     try {
-      const cursos = await cursoService.listarTodos();
-      res.status(200).json(cursos);
+      const courses = await CourseService.findAll(); // cursos -> courses, listarTodos -> findAll
+      res.status(200).json(courses);
     } catch (error) {
       console.error('Erro (Controller) ao listar cursos:', error);
       res
@@ -14,21 +16,23 @@ class CursoController {
     }
   }
 
-  async listarCursoPorId(req, res) {
+  // GET /cursos/:id
+  async findCourseById(req, res) {
+    // listarCursoPorId -> findCourseById
     const id = req.params.id;
 
     try {
       // 1. Chamar a service com o ID da requisição
-      const curso = await cursoService.listarPorId(id);
+      const course = await CourseService.findById(id); // curso -> course, listarPorId -> findById
 
       // 2. Verificar se o curso existe APÓS a chamada da service
-      if (!curso) {
+      if (!course) {
         return res
           .status(404)
           .json({ message: `Curso com ID ${id} não encontrado.` });
       }
 
-      res.status(200).json(curso);
+      res.status(200).json(course);
     } catch (error) {
       console.error(`Erro (Controller) ao buscar curso ID ${id}:`, error);
       res
@@ -38,20 +42,21 @@ class CursoController {
   }
 
   // POST /cursos
-  async criarCurso(req, res) {
-    const { titulo, descricao, preco } = req.body;
+  async createCourse(req, res) {
+    // criarCurso -> createCourse
+    const { title, description, price } = req.body;
 
-    if (!titulo || !descricao || !preco) {
+    if (!title || !description || !price) {
       return res
         .status(400)
         .json({ message: 'Título, descrição e preços são obrigatórios.' });
     }
 
     try {
-      const novoCurso = await cursoService.criar(titulo, descricao, preco);
+      const newCourse = await CourseService.create(title, description, price); // novoCurso -> newCourse, criar -> create
       res.status(201).json({
         message: 'Curso cadastrado com sucesso!',
-        ...novoCurso.toJSON(),
+        ...newCourse.toJSON(),
       });
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
@@ -65,18 +70,20 @@ class CursoController {
   }
 
   // PUT /cursos/:id
-  async atualizarCurso(req, res) {
+  async updateCourse(req, res) {
+    // atualizarCurso -> updateCourse
     const id = req.params.id;
-    const { titulo, descricao, preco } = req.body;
+    const { title, description, price } = req.body;
 
     try {
-      const cursoAtualizado = await cursoService.atualizar(
+      const updatedCourse = await CourseService.update(
+        // cursoAtualizado -> updatedCourse, atualizar -> update
         id,
-        titulo,
-        descricao,
-        preco,
+        title,
+        description,
+        price,
       );
-      if (!cursoAtualizado) {
+      if (!updatedCourse) {
         return res.status(404).json({
           message: `Curso com ID ${id} não encontrado para atualização.`,
         });
@@ -84,7 +91,7 @@ class CursoController {
 
       res.status(200).json({
         message: 'Curso atualizado com sucesso!',
-        ...cursoAtualizado.toJSON(),
+        ...updatedCourse.toJSON(),
       });
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
@@ -98,13 +105,14 @@ class CursoController {
   }
 
   // DELETE /cursos/:id
-  async deletarCurso(req, res) {
+  async deleteCourse(req, res) {
+    // deletarCurso -> deleteCourse
     const id = req.params.id;
 
     try {
-      const foiDeletado = await cursoService.deletar(id);
+      const deleted = await CourseService.delete(id); // foiDeletado -> deleted, deletar -> delete
 
-      if (!foiDeletado) {
+      if (!deleted) {
         return res.status(404).json({
           message: `Curso com ID ${id} não encontrado para exclusão.`,
         });
@@ -120,25 +128,27 @@ class CursoController {
   }
 
   // GET /cursos/:id/alunos
-  async listarAlunosDoCurso(req, res) {
-    const cursoId = req.params.id;
+  async findCourseStudents(req, res) {
+    // listarAlunosDoCurso -> findCourseStudents
+    const courseId = req.params.id; // cursoId -> courseId
 
     try {
-      const alunos = await cursoService.listarAlunosPorCurso(cursoId);
+      const students = await CourseService.findStudentsByCourse(courseId); // alunos -> students, listarAlunosPorCurso -> findStudentsByCourse
 
-      if (alunos === null) {
+      if (students === null) {
         return res
           .status(404)
-          .json({ message: `Curso com ID ${cursoId} não encontrado.` });
+          .json({ message: `Curso com ID ${courseId} não encontrado.` });
       }
 
-      if (alunos.length === 0) {
-        return res
-          .status(200)
-          .json({ message: 'Nenhum aluno inscrito neste curso.', alunos: [] });
+      if (students.length === 0) {
+        return res.status(200).json({
+          message: 'Nenhum aluno inscrito neste curso.',
+          students: [],
+        });
       }
 
-      res.status(200).json(alunos);
+      res.status(200).json(students);
     } catch (error) {
       console.error('Erro (Controller) ao listar alunos do curso:', error);
       res
@@ -148,4 +158,4 @@ class CursoController {
   }
 }
 
-export default new CursoController();
+export default new CourseController();

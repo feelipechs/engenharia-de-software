@@ -1,13 +1,15 @@
-import alunoService from '../services/alunoService.js';
+import StudentService from '../services/StudentService.js'; // AlunoService -> StudentService
 
-class AlunoController {
+class StudentController {
+  // AlunoController -> StudentController
   // ----------------------------------------------------
-  // GET /alunos
+  // GET /alunos (Find all students)
   // ----------------------------------------------------
-  async listarAlunos(req, res) {
+  async findAllStudents(req, res) {
+    // listarAlunos -> findAllStudents
     try {
-      const alunos = await alunoService.listarTodos();
-      res.status(200).json(alunos);
+      const students = await StudentService.findAll(); // alunos -> students, listarTodos -> findAll
+      res.status(200).json(students);
     } catch (error) {
       console.error('Erro (Controller) ao listar alunos:', error);
       res
@@ -17,20 +19,21 @@ class AlunoController {
   }
 
   // ----------------------------------------------------
-  // GET /alunos/:id (NOVO MÉTODO)
+  // GET /alunos/:id (Find student by ID)
   // ----------------------------------------------------
-  async listarAlunoPorId(req, res) {
+  async findStudentById(req, res) {
+    // listarAlunoPorId -> findStudentById
     const id = req.params.id;
     try {
-      const aluno = await alunoService.listarPorId(id);
+      const student = await StudentService.findById(id); // aluno -> student, listarPorId -> findById
 
-      if (!aluno) {
+      if (!student) {
         return res
           .status(404)
           .json({ message: `Aluno com ID ${id} não encontrado.` });
       }
 
-      res.status(200).json(aluno);
+      res.status(200).json(student);
     } catch (error) {
       console.error(`Erro (Controller) ao buscar aluno ID ${id}:`, error);
       res
@@ -40,13 +43,14 @@ class AlunoController {
   }
 
   // ----------------------------------------------------
-  // POST /alunos (AJUSTADO: Adiciona 'matricula')
+  // POST /alunos (Create a new student)
   // ----------------------------------------------------
-  async criarAluno(req, res) {
-    // Agora incluímos o campo matricula (RA)
-    const { nome, email, matricula } = req.body;
+  async createStudent(req, res) {
+    // criarAluno -> createStudent
+    // Agora incluímos o campo registration (matricula/RA)
+    const { name, email, registration } = req.body; // matricula -> registration
 
-    if (!nome || !email || !matricula) {
+    if (!name || !email || !registration) {
       // A validação agora deve incluir a matrícula
       return res
         .status(400)
@@ -54,13 +58,13 @@ class AlunoController {
     }
 
     try {
-      // Passamos a matricula para o serviço
-      const novoAluno = await alunoService.criar(nome, email, matricula);
+      // Passamos a 'registration' para o serviço
+      const newStudent = await StudentService.create(name, email, registration); // novoAluno -> newStudent, criar -> create
 
       // O serviço Sequelize retorna o objeto do aluno recém-criado
       res.status(201).json({
         message: 'Aluno cadastrado com sucesso!',
-        ...novoAluno.toJSON(),
+        ...newStudent.toJSON(),
       });
     } catch (error) {
       // 1. CAPTURA DE ERRO DE VALIDAÇÃO (Formato da Matrícula, etc.)
@@ -88,22 +92,24 @@ class AlunoController {
   }
 
   // ----------------------------------------------------
-  // PUT /alunos/:id (NOVO MÉTODO)
+  // PUT /alunos/:id (Update student)
   // ----------------------------------------------------
-  async atualizarAluno(req, res) {
+  async updateStudent(req, res) {
+    // atualizarAluno -> updateStudent
     const id = req.params.id;
-    const { nome, email, matricula } = req.body;
+    const { name, email, registration } = req.body; // matricula -> registration
 
     try {
       // O service agora retorna o aluno atualizado ou null
-      const alunoAtualizado = await alunoService.atualizar(
+      const updatedStudent = await StudentService.update(
+        // alunoAtualizado -> updatedStudent, atualizar -> update
         id,
-        nome,
+        name,
         email,
-        matricula,
+        registration,
       );
 
-      if (!alunoAtualizado) {
+      if (!updatedStudent) {
         return res.status(404).json({
           message: `Aluno com ID ${id} não encontrado para atualização.`,
         });
@@ -111,7 +117,7 @@ class AlunoController {
 
       res.status(200).json({
         message: 'Aluno atualizado com sucesso!',
-        ...alunoAtualizado.toJSON(),
+        ...updatedStudent.toJSON(),
       });
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
@@ -127,16 +133,17 @@ class AlunoController {
   }
 
   // ----------------------------------------------------
-  // DELETE /alunos/:id (NOVO MÉTODO)
+  // DELETE /alunos/:id (Delete student)
   // ----------------------------------------------------
-  async deletarAluno(req, res) {
+  async deleteStudent(req, res) {
+    // deletarAluno -> deleteStudent
     const id = req.params.id;
 
     try {
       // O service retorna true ou false
-      const foiDeletado = await alunoService.deletar(id);
+      const deleted = await StudentService.delete(id); // foiDeletado -> deleted, deletar -> delete
 
-      if (!foiDeletado) {
+      if (!deleted) {
         return res.status(404).json({
           message: `Aluno com ID ${id} não encontrado para exclusão.`,
         });
@@ -152,29 +159,30 @@ class AlunoController {
   }
 
   // ----------------------------------------------------
-  // GET /alunos/:id/cursos (Sem alteração no corpo)
+  // GET /alunos/:id/cursos (List student courses)
   // ----------------------------------------------------
-  async listarCursosDoAluno(req, res) {
-    const alunoId = req.params.id;
+  async findStudentCourses(req, res) {
+    // listarCursosDoAluno -> findStudentCourses
+    const studentId = req.params.id; // alunoId -> studentId
 
     try {
       // O service foi alterado para retornar null se o aluno não existir
-      const cursos = await alunoService.listarCursosPorAluno(alunoId);
+      const courses = await StudentService.findCoursesByStudent(studentId); // cursos -> courses, listarCursosPorAluno -> findCoursesByStudent
 
-      if (cursos === null) {
+      if (courses === null) {
         return res
           .status(404)
-          .json({ message: `Aluno com ID ${alunoId} não encontrado.` });
+          .json({ message: `Aluno com ID ${studentId} não encontrado.` });
       }
 
-      if (cursos.length === 0) {
+      if (courses.length === 0) {
         return res.status(200).json({
           message: 'Aluno não está inscrito em nenhum curso.',
-          cursos: [],
+          courses: [],
         });
       }
 
-      res.status(200).json(cursos);
+      res.status(200).json(courses);
     } catch (error) {
       console.error('Erro (Controller) ao listar cursos do aluno:', error);
       res
@@ -184,4 +192,4 @@ class AlunoController {
   }
 }
 
-export default new AlunoController();
+export default new StudentController(); // AlunoController -> StudentController

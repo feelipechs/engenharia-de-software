@@ -1,31 +1,34 @@
-import inscricaoService from '../services/inscricaoService.js';
+import EnrollmentService from '../services/EnrollmentService.js'; // inscricaoService -> EnrollmentService
 
-class InscricaoController {
+class EnrollmentController {
+  // InscricaoController -> EnrollmentController
   // ----------------------------------------------------
-  // POST /inscricoes (AJUSTADO)
+  // POST /inscricoes (Create Enrollment)
   // ----------------------------------------------------
-  async realizarInscricao(req, res) {
-    // Nota: as chaves estrangeiras no Sequelize são normalmente camelCase (alunoId, cursoId)
-    const { aluno_id, curso_id } = req.body;
+  async createEnrollment(req, res) {
+    // realizarInscricao -> createEnrollment
+    // Nota: as chaves estrangeiras no Sequelize são normalmente camelCase (studentId, courseId)
+    const { student_id, course_id } = req.body; // Mantemos as variáveis de body com underline se for a convenção de entrada
 
-    if (!aluno_id || !curso_id) {
+    if (!student_id || !course_id) {
       return res
         .status(400)
-        .json({ message: 'Os IDs do aluno e do curso são obrigatórios.' });
+        .json({ message: 'Os IDs do student e do course são obrigatórios.' });
     }
 
     try {
       // Chama o service usando as IDs
-      const novaInscricao = await inscricaoService.inscrever(
-        aluno_id,
-        curso_id,
+      const newEnrollment = await EnrollmentService.create(
+        // novaInscricao -> newEnrollment, inscrever -> create
+        student_id,
+        course_id,
       );
 
-      // O service agora retorna o objeto do Model Inscricao
+      // O service agora retorna o objeto do Model Enrollment
       res.status(201).json({
         message: 'Inscrição realizada com sucesso!',
         // Retorna o objeto completo da inscrição (incluindo o ID da inscrição e timestamps)
-        inscricao: novaInscricao.toJSON(),
+        enrollment: newEnrollment.toJSON(), // inscricao -> enrollment
       });
     } catch (error) {
       // Tratamento específico para erro de chave estrangeira (Aluno ou Curso não existem)
@@ -43,12 +46,13 @@ class InscricaoController {
   }
 
   // ----------------------------------------------------
-  // GET /inscricoes (NOVO MÉTODO)
+  // GET /inscricoes (Find All Enrollments)
   // ----------------------------------------------------
-  async listarInscricoes(req, res) {
+  async findAllEnrollments(req, res) {
+    // listarInscricoes -> findAllEnrollments
     try {
-      const inscricoes = await inscricaoService.listarTodas();
-      res.status(200).json(inscricoes);
+      const enrollments = await EnrollmentService.findAll(); // inscricoes -> enrollments, listarTodas -> findAll
+      res.status(200).json(enrollments);
     } catch (error) {
       console.error('Erro (Controller) ao listar inscrições:', error);
       res
@@ -57,20 +61,24 @@ class InscricaoController {
     }
   }
 
-  async listarInscricaoPorId(req, res) {
+  // ----------------------------------------------------
+  // GET /inscricoes/:id (Find Enrollment by ID)
+  // ----------------------------------------------------
+  async findEnrollmentById(req, res) {
+    // listarInscricaoPorId -> findEnrollmentById
     const id = req.params.id;
 
     try {
       // Chama o service
-      const inscricao = await inscricaoService.listarPorId(id);
+      const enrollment = await EnrollmentService.findById(id); // inscricao -> enrollment, listarPorId -> findById
 
-      if (!inscricao) {
+      if (!enrollment) {
         return res
           .status(404)
           .json({ message: `Inscrição com ID ${id} não encontrada.` });
       }
 
-      res.status(200).json(inscricao.toJSON());
+      res.status(200).json(enrollment.toJSON());
     } catch (error) {
       console.error(`Erro (Controller) ao buscar inscrição ID ${id}:`, error);
       res
@@ -80,15 +88,16 @@ class InscricaoController {
   }
 
   // ----------------------------------------------------
-  // DELETE /inscricoes/:id (NOVO MÉTODO)
+  // DELETE /inscricoes/:id (Delete Enrollment)
   // ----------------------------------------------------
-  async deletarInscricao(req, res) {
+  async deleteEnrollment(req, res) {
+    // deletarInscricao -> deleteEnrollment
     const id = req.params.id; // ID da Inscrição, não do Aluno ou Curso
 
     try {
-      const foiDeletado = await inscricaoService.deletar(id);
+      const deleted = await EnrollmentService.delete(id); // foiDeletado -> deleted, deletar -> delete
 
-      if (!foiDeletado) {
+      if (!deleted) {
         return res
           .status(404)
           .json({ message: `Inscrição com ID ${id} não encontrada.` });
@@ -104,4 +113,4 @@ class InscricaoController {
   }
 }
 
-export default new InscricaoController();
+export default new EnrollmentController();

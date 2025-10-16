@@ -1,38 +1,33 @@
 import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  const Curso = sequelize.define(
-    'Curso',
+  const User = sequelize.define(
+    'User',
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      titulo: {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
         type: DataTypes.STRING,
         unique: true,
         allowNull: false,
       },
-      descricao: {
+      password: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      preco: {
-        type: DataTypes.DECIMAL(7, 2),
-        allowNull: false,
-        defaultValue: 0.0,
-        validate: {
-          isDecimal: true,
-          min: 0.0, // Garante que o preço não é negativo
-        },
-      },
     },
     {
-      tableName: 'cursos', // Opcional: define o nome exato da tabela
+      tableName: 'users', // Opcional: define o nome exato da tabela
       timestamps: true, // Adiciona colunas createdAt e updatedAt
     },
   );
 
-  return Curso;
+  return User;
 };
