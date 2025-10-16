@@ -1,15 +1,16 @@
-import express from 'express';
+import { Router } from 'express';
 import cursoController from '../controllers/cursoController.js';
 
-const router = express.Router();
+const router = Router();
 
-// GET /cursos - Lista todos os cursos.
-router.get('/', cursoController.listarCursos);
+// Rotas READ
+router.get('/', cursoController.listarCursos); // GET /cursos
+router.get('/:id', cursoController.listarCursoPorId); // GET /cursos/:id
+router.get('/:id/alunos', cursoController.listarAlunosDoCurso); // GET /cursos/:id/alunos
 
-// POST /cursos - Cadastra um novo curso.
-router.post('/', cursoController.criarCurso);
-
-// GET /cursos/:id/alunos - Lista todos os alunos inscritos em um curso
-router.get('/:id/alunos', cursoController.listarAlunosDoCurso)
+// Rotas WRITE
+router.post('/', cursoController.criarCurso); // POST /cursos
+router.put('/:id', cursoController.atualizarCurso); // PUT /cursos/:id
+router.delete('/:id', cursoController.deletarCurso); // DELETE /cursos/:id
 
 export default router;

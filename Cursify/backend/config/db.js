@@ -1,28 +1,11 @@
-import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
-dotenv.config();
+import { Sequelize } from 'sequelize';
 
-const dbConfig = {
-    host: process.env.DB_HOST, // necessário .env com host, user, password, name e port
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-};
+// A opção 'storage' define o caminho para o arquivo do banco de dados
+// Use storage: ':memory:' para um banco de dados temporário em memória
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './cursify_database.sqlite',
+  logging: false, // Opcional: desativa o log das consultas SQL no console
+});
 
-const pool = mysql.createPool(dbConfig);
-
-// testar conexão
-pool.getConnection()
-    .then(connection => {
-        console.log('Conexão com o MySQL estabelecida com sucesso!');
-        connection.release();
-    })
-    .catch(err => {
-        console.error('ERRO AO CONECTAR AO MYSQL:', err.message);
-        console.error('Verifique suas credenciais no arquivo .env.');
-    });
-
-export default pool;
+export default sequelize;

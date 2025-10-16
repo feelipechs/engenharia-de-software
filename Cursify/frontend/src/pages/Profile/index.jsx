@@ -4,7 +4,7 @@ import SettingsNav from '../../components/Profile/SettingsNav';
 import ProfileSection from '../../components/Profile/ProfileSection';
 import SecuritySection from '../../components/Profile/SecuritySection';
 import ThemeSwitcher from '../../components/ThemeSwitcher';
-import { ArrowLeftIcon } from '@heroicons/react/20/solid';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 // Importe GeneralSection se for usá-lo
 
@@ -44,14 +44,13 @@ const Profile = () => {
     <div className="min-h-screen p-4 sm:p-8 bg-white dark:bg-gray-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <header className="flex place-content-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <header className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Configurações do Usuário
           </h1>
           <ThemeSwitcher />
-          {/* Adicionar ThemeToggle aqui se não estiver no Header global */}
         </header>
-        <Link to="/cursos" className="flex text-dark dark:text-white">
+        <Link to="/cursos" className="flex text-dark dark:text-white mt-3">
           <ArrowLeftIcon className="size-6" />
           <p>Voltar</p>
         </Link>

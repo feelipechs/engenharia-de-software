@@ -7,6 +7,7 @@ import Plans from './pages/Plans';
 import Courses from './pages/Courses';
 import Sac from './pages/Sac';
 import Profile from './pages/Profile';
+import Management from './pages/Management';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/planos" element={<Plans />} />
         <Route path="/sac" element={<Sac />} />
         <Route path="/configuracoes/perfil" element={<Profile />} />
+        <Route path="/admin/gerenciamento" element={<Management />} />
       </Routes>
     </Router>
   );

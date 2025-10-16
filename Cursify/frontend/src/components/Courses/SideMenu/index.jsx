@@ -3,7 +3,7 @@ import {
   HomeIcon,
   BookOpenIcon,
   AcademicCapIcon,
-  Cog6ToothIcon,
+  CogIcon,
   QuestionMarkCircleIcon,
   ChevronDownIcon,
   ChevronUpIcon,
@@ -13,27 +13,21 @@ import {
 // Estrutura de dados (Pode ser transferida para um arquivo de configuração)
 // -----------------------------------------------------
 const menuItemsData = [
-  { name: 'Dashboard', icon: HomeIcon, href: '/dashboard', hasSubMenu: false },
+  { name: 'Dashboard', icon: HomeIcon, href: '/cursos', hasSubMenu: false },
   {
     name: 'Meus Cursos',
     icon: BookOpenIcon,
-    href: '/cursos',
+    href: '/meus-cursos',
     hasSubMenu: true,
     subItems: [
-      { name: 'Em Andamento', href: '/cursos/andamento' },
-      { name: 'Concluídos', href: '/cursos/concluidos' },
-      { name: 'Favoritos', href: '/cursos/favoritos' },
+      { name: 'Em Andamento', href: '/meus-cursos/andamento' },
+      { name: 'Concluídos', href: '/meus-cursos/concluidos' },
+      { name: 'Favoritos', href: '/meus-cursos/favoritos' },
     ],
   },
   {
-    name: 'Catálogo',
-    icon: AcademicCapIcon,
-    href: '/catalogo',
-    hasSubMenu: false,
-  },
-  {
     name: 'Configurações',
-    icon: Cog6ToothIcon,
+    icon: CogIcon,
     href: '/configuracoes',
     hasSubMenu: true,
     subItems: [{ name: 'Perfil', href: '/configuracoes/perfil' }],
@@ -44,10 +38,19 @@ const menuItemsData = [
     href: '/ajuda',
     hasSubMenu: false,
   },
+  {
+    name: 'Admin',
+    icon: AcademicCapIcon,
+    href: '/admin',
+    hasSubMenu: true,
+    subItems: [
+      { name: 'Gerenciar alunos e cursos', href: '/admin/gerenciamento' },
+    ],
+  },
 ];
 
 // O path ativo é hardcoded apenas para demonstração do estilo 'ativo'
-const activePath = '/dashboard';
+const activePath = '/cursos';
 
 const SideMenu = () => {
   // Estado para controlar qual submenu está aberto (mantido para a interação de estilo)

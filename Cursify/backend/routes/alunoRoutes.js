@@ -1,15 +1,16 @@
-import express from 'express';
-import alunoController from '../controllers/alunoController.js';
+import { Router } from 'express';
+import AlunoController from '../controllers/alunoController.js';
 
-const router = express.Router(); // criar instância do router
+const router = Router();
 
-// GET /alunos - Lista todos os alunos.
-router.get('/', alunoController.listarAlunos); // associa um método HTTP e um caminho a um método específico do alunoController
+// Rotas READ
+router.get('/', AlunoController.listarAlunos); // GET /alunos
+router.get('/:id', AlunoController.listarAlunoPorId); // GET /alunos/:id
+router.get('/:id/cursos', AlunoController.listarCursosDoAluno); // GET /alunos/:id/cursos
 
-// POST /alunos - Cadastra um novo aluno.
-router.post('/', alunoController.criarAluno);
-
-// GET /alunos/:id/cursos - Lista todos os cursos em que um aluno está inscrito
-router.get('/:id/cursos', alunoController.listarCursosDoAluno);
+// Rotas WRITE
+router.post('/', AlunoController.criarAluno); // POST /alunos
+router.put('/:id', AlunoController.atualizarAluno); // PUT /alunos/:id
+router.delete('/:id', AlunoController.deletarAluno); // DELETE /alunos/:id
 
 export default router;
